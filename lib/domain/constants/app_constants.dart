@@ -14,6 +14,8 @@ class AppConstants{
   static const String img_app_logo_solid = "assets/icons/ic_app_logo_solid.png";
   static const String img_app_logo_outline_black = "assets/icons/ic_app_logo_outline.png";
 
+
+  static const String dbName = "expensoDB.db";
   static const String expTable = "expense";
   ///columns
   static const String columnExpId = "e_id";
@@ -31,6 +33,7 @@ class AppConstants{
   static const String columnUserName = "u_name";
   static const String columnUserEmail = "u_email";
   static const String columnUserMobNo = "u_mob_no";
+  static const String columnUserPass = "u_pass";
 
   ///cat data
   static final List<CatModel> allCat = [

@@ -1,10 +1,13 @@
+import 'package:expenso_422/data/local/model/user_model.dart';
+import 'package:expenso_422/ui/custom_widgets/app_rounded_btn.dart';
+import 'package:expenso_422/ui/custom_widgets/ui_helper.dart';
+import 'package:expenso_422/ui/screen/on_boarding/bloc/user_bloc.dart';
+import 'package:expenso_422/ui/screen/on_boarding/bloc/user_event.dart';
+import 'package:expenso_422/ui/screen/on_boarding/bloc/user_state.dart';
 import 'package:flutter/material.dart';
-
-import '../../custom_widgets/app_rounded_btn.dart';
-import '../../custom_widgets/ui_helper.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignupPage extends StatelessWidget {
-
   var emailController = TextEditingController();
   var nameController = TextEditingController();
   var mobNoController = TextEditingController();
@@ -13,6 +16,7 @@ class SignupPage extends StatelessWidget {
 
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
+  bool isCreatingAccount = false;
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -30,8 +34,8 @@ class SignupPage extends StatelessWidget {
               Text(' Create Account', style: TextStyle(fontSize: 34)),
               SizedBox(height: 21),
               TextFormField(
-                validator: (value){
-                  if(value==null || value.isEmpty){
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
                     return "Please enter your name";
                   }
                   return null;
@@ -44,18 +48,15 @@ class SignupPage extends StatelessWidget {
               ),
               SizedBox(height: 11),
               TextFormField(
-                onChanged: (value){
+                onChanged: (value) {},
+                validator: (value) {
+                  final bool emailValid = RegExp(
+                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                  ).hasMatch(value ?? "");
 
-                },
-                validator: (value){
-
-                  final bool emailValid =
-                  RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                      .hasMatch(value??"");
-
-                  if(value==null || value.isEmpty){
+                  if (value == null || value.isEmpty) {
                     return "Please enter your email";
-                  } else if(!emailValid){
+                  } else if (!emailValid) {
                     return "Please enter a valid email";
                   } else {
                     return null;
@@ -69,11 +70,11 @@ class SignupPage extends StatelessWidget {
               ),
               SizedBox(height: 11),
               TextFormField(
-                validator: (value){
-                  if(value==null || value.isEmpty){
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
                     return "Please enter your mobile no";
                   }
-                  if(value.length!=10){
+                  if (value.length != 10) {
                     return "Please enter a valid mobile no";
                   }
                   return null;
@@ -89,14 +90,14 @@ class SignupPage extends StatelessWidget {
               StatefulBuilder(
                 builder: (context, ss) {
                   return TextFormField(
-                    validator: (value){
-                      final bool passValid =
-                      RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')
-                          .hasMatch(value??"");
+                    validator: (value) {
+                      final bool passValid = RegExp(
+                        r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
+                      ).hasMatch(value ?? "");
 
-                      if(value==null || value.isEmpty){
+                      if (value == null || value.isEmpty) {
                         return "Please enter your password";
-                      } else if(!passValid){
+                      } else if (!passValid) {
                         return "Please enter a valid password";
                       } else {
                         return null;
@@ -119,21 +120,22 @@ class SignupPage extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Password must contain at least one uppercase letter, at least one lowercase letter, at least one digit, at least one special character (@\$!%*?&), minimum 8 characters in length."),
+                child: Text(
+                  "Password must contain at least one uppercase letter, at least one lowercase letter, at least one digit, at least one special character (@\$!%*?&), minimum 8 characters in length.",
+                ),
               ),
               SizedBox(height: 11),
               StatefulBuilder(
                 builder: (context, ss) {
                   return TextFormField(
-                    validator: (value){
-                      if(value==null || value.isEmpty){
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
                         return "Please retype your password";
-                      } else if(passController.text!=value){
+                      } else if (passController.text != value) {
                         return "Password does not match";
                       } else {
                         return null;
                       }
-
                     },
                     controller: confirmPassController,
                     obscureText: !isConfirmPasswordVisible,
@@ -151,18 +153,62 @@ class SignupPage extends StatelessWidget {
                 },
               ),
               SizedBox(height: 21),
-              AppRoundedButton(onTap: () {
+              BlocConsumer<UserBloc, UserState>(
+                listener: (context, state) {
+                  if (state is UserLoadingState) {
+                    isCreatingAccount = true;
+                  }
 
-                if(formKey.currentState!.validate()){
-                  ///create a user in DB
-                }
+                  if (state is UserFailureState) {
+                    isCreatingAccount = false;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.errorMsg),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
 
-
-              }, title: "SignUp"),
+                  if (state is UserSuccessState) {
+                    isCreatingAccount = false;
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "Your account has been created successfully!!",
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                },
+                builder: (_, state) {
+                  return AppRoundedButton(
+                    onTap: isCreatingAccount
+                        ? null
+                        : () {
+                            if (formKey.currentState!.validate()) {
+                              ///create a user in DB
+                              context.read<UserBloc>().add(
+                                RegisterUserEvent(
+                                  mUser: UserModel(
+                                    name: nameController.text,
+                                    email: emailController.text,
+                                    mobNo: mobNoController.text,
+                                    pass: passController.text
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                    title: isCreatingAccount ? "Creating account..." : "SignUp",
+                  );
+                },
+              ),
               SizedBox(height: 11),
               Center(
                 child: InkWell(
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(context);
                   },
                   child: RichText(
@@ -190,5 +236,4 @@ class SignupPage extends StatelessWidget {
       ),
     );
   }
-
 }

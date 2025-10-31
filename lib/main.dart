@@ -1,8 +1,22 @@
+import 'package:expenso_422/data/local/helper/db_helper.dart';
 import 'package:expenso_422/domain/constants/app_routes.dart';
+import 'package:expenso_422/ui/screen/on_boarding/bloc/user_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+///signUp complete
+///login implement
+///session maintain using prefs
+///add logout feature
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    BlocProvider(
+      create: (context) => UserBloc(dbHelper: DBHelper.getInstance()),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

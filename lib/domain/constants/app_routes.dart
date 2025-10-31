@@ -1,6 +1,6 @@
 import 'package:expenso_422/ui/screen/dashboard/dashboard_page.dart';
-import 'package:expenso_422/ui/screen/login/login_page.dart';
-import 'package:expenso_422/ui/screen/signup/signup_page.dart';
+import 'package:expenso_422/ui/screen/on_boarding/login/login_page.dart';
+import 'package:expenso_422/ui/screen/on_boarding/signup/signup_page.dart';
 import 'package:expenso_422/ui/screen/splash/spalsh_page.dart';
 import 'package:flutter/cupertino.dart';
 
