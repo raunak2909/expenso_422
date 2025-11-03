@@ -4,6 +4,7 @@ import 'package:expenso_422/data/local/model/user_model.dart';
 import 'package:expenso_422/domain/constants/app_constants.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBHelper {
@@ -68,16 +69,34 @@ class DBHelper {
     return users.isNotEmpty;
   }
 
-  Future<bool> authenticateUser({required String email, required String pass}) async {
+  ///1-> success
+  ///2-> email invalid
+  ///3-> pass incorrect
+  Future<int> authenticateUser({required String email, required String pass}) async {
     var db = await initDB();
 
-    var users = await db.query(
-      AppConstants.userTable,
-      where:
-          "${AppConstants.columnUserEmail} = ? AND ${AppConstants.columnUserPass} = ?",
-      whereArgs: [email, pass],
-    );
+    if(await checkIfUserAlreadyExists(email: email)){
+      List<Map<String,dynamic>> users = await db.query(
+        AppConstants.userTable,
+        where:
+        "${AppConstants.columnUserEmail} = ? AND ${AppConstants.columnUserPass} = ?",
+        whereArgs: [email, pass],
+      );
 
-    return users.isNotEmpty;
+      if(users.isNotEmpty){
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setInt(AppConstants.pref_user_id, users[0][AppConstants.columnUserId] as int);
+        return 1;
+      } else {
+        ///password incorrect
+        return 3;
+      }
+
+    } else {
+      ///email invalid
+      return 2;
+    }
+
+
   }
 }

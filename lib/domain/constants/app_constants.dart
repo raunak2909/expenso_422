@@ -14,6 +14,8 @@ class AppConstants{
   static const String img_app_logo_solid = "assets/icons/ic_app_logo_solid.png";
   static const String img_app_logo_outline_black = "assets/icons/ic_app_logo_outline.png";
 
+  ///prefs
+  static const String pref_user_id = "pref_user_id";
 
   static const String dbName = "expensoDB.db";
   static const String expTable = "expense";

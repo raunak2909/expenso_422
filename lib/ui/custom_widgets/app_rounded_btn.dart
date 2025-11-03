@@ -10,6 +10,7 @@ class AppRoundedButton extends StatelessWidget {
   bool isIcon;
   IconData? mIcon;
   double mWidth;
+  Widget? myChild;
 
   AppRoundedButton({
     this.mWidth = double.infinity,
@@ -18,7 +19,8 @@ class AppRoundedButton extends StatelessWidget {
     this.bgColor = Colors.orange,
     this.fgColor = Colors.white,
     this.isIcon = false,
-    this.mIcon
+    this.mIcon,
+    this.myChild
 });
 
   @override
@@ -31,7 +33,7 @@ class AppRoundedButton extends StatelessWidget {
           foregroundColor: fgColor
         ),
           onPressed: onTap,
-          child: isIcon ? Row(
+          child: myChild ?? (isIcon ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(mIcon),
@@ -40,7 +42,7 @@ class AppRoundedButton extends StatelessWidget {
               ),
               Text(title)
             ],
-          ) : Text(title)),
+          ) : Text(title))),
     );
   }
 }
