@@ -4,6 +4,8 @@ import 'package:expenso_422/ui/screen/on_boarding/signup/signup_page.dart';
 import 'package:expenso_422/ui/screen/splash/spalsh_page.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../../ui/screen/add_expense/add_expense_page.dart';
+
 class AppRoutes{
 
   static const String splash = "/";
@@ -18,6 +20,7 @@ class AppRoutes{
     login : (_) => LoginPage(),
     signup : (_) => SignupPage(),
     dashboard : (_) => DashboardPage(),
+    addExpense : (_) => AddExpensePage(),
   };
 
 

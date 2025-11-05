@@ -46,6 +46,20 @@ class AppConstants{
     CatModel(id: 5, title: "Fast-Food", imgPath: img_fast_food),
     CatModel(id: 6, title: "Restaurant", imgPath: img_restaurant),
     CatModel(id: 7, title: "Movie", imgPath: img_movie),
+    CatModel(id: 1, title: "Snack", imgPath: img_snack),
+    CatModel(id: 2, title: "Travel", imgPath: img_travel),
+    CatModel(id: 3, title: "Shopping", imgPath: img_shopping),
+    CatModel(id: 4, title: "Coffee", imgPath: img_coffee),
+    CatModel(id: 5, title: "Fast-Food", imgPath: img_fast_food),
+    CatModel(id: 6, title: "Restaurant", imgPath: img_restaurant),
+    CatModel(id: 7, title: "Movie", imgPath: img_movie),
+    CatModel(id: 1, title: "Snack", imgPath: img_snack),
+    CatModel(id: 2, title: "Travel", imgPath: img_travel),
+    CatModel(id: 3, title: "Shopping", imgPath: img_shopping),
+    CatModel(id: 4, title: "Coffee", imgPath: img_coffee),
+    CatModel(id: 5, title: "Fast-Food", imgPath: img_fast_food),
+    CatModel(id: 6, title: "Restaurant", imgPath: img_restaurant),
+    CatModel(id: 7, title: "Movie", imgPath: img_movie),
   ];
 
 }

@@ -1,5 +1,6 @@
 import 'package:expenso_422/data/local/helper/db_helper.dart';
 import 'package:expenso_422/domain/constants/app_routes.dart';
+import 'package:expenso_422/ui/screen/add_expense/bloc/expense_bloc.dart';
 import 'package:expenso_422/ui/screen/on_boarding/bloc/user_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,11 +10,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 ///session maintain using prefs
 ///add logout feature
 
-
 void main() {
   runApp(
-    BlocProvider(
-      create: (context) => UserBloc(dbHelper: DBHelper.getInstance()),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => UserBloc(dbHelper: DBHelper.getInstance()),
+        ),
+        BlocProvider(
+          create: (context) => ExpenseBloc(dbHelper: DBHelper.getInstance()),
+        ),
+      ],
       child: MyApp(),
     ),
   );
