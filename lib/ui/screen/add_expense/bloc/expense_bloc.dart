@@ -1,36 +1,87 @@
 import 'package:expenso_422/data/local/helper/db_helper.dart';
+import 'package:expenso_422/data/local/model/expense_model.dart';
+import 'package:expenso_422/data/local/model/filter_expense_model.dart';
 import 'package:expenso_422/ui/screen/add_expense/bloc/expense_event.dart';
 import 'package:expenso_422/ui/screen/add_expense/bloc/expense_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
-class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState>{
+class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   DBHelper dbHelper;
-  ExpenseBloc({required this.dbHelper}) :super(ExpenseInitialState()){
+  DateFormat df = DateFormat.yMMMMd();
 
-    on<AddExpenseEvent>((event, emit) async{
-
+  ExpenseBloc({required this.dbHelper}) : super(ExpenseInitialState()) {
+    on<AddExpenseEvent>((event, emit) async {
       emit(ExpenseLoadingState());
 
-      bool isAdded = await dbHelper
-          .addExpense(newExpense: event.newExp);
+      bool isAdded = await dbHelper.addExpense(newExpense: event.newExp);
 
-      if(isAdded){
+      if (isAdded) {
         var allExp = await dbHelper.getAllExpenses();
-        emit(ExpenseLoadedState(allExp: allExp));
+        emit(ExpenseLoadedState(allExp: filterAllExp(allExp, 1)));
       } else {
         emit(ExpenseErrorState(errorMsg: "Something went wrong"));
       }
-
     });
 
-    on<FetchInitialExpenseEvent>((event, emit) async{
-
+    on<FetchInitialExpenseEvent>((event, emit) async {
       emit(ExpenseLoadingState());
 
       var allExp = await dbHelper.getAllExpenses();
-      emit(ExpenseLoadedState(allExp: allExp));
+      emit(ExpenseLoadedState(allExp: filterAllExp(allExp, event.filterFlag)));
     });
-
   }
 
+  List<FilterExpenseModel> filterAllExp(
+    List<ExpenseModel> allExpenses,
+    int flag,
+  ) {
+    List<FilterExpenseModel> filteredExpenses = [];
+
+    ///filter == 1
+    ///date wise
+
+    ///uniqueDate
+    List<String> uniqueDates = [];
+
+    for (ExpenseModel eachExp in allExpenses) {
+      String eachDate = df.format(
+        DateTime.fromMillisecondsSinceEpoch(eachExp.createdAt),
+      );
+      if (!uniqueDates.contains(eachDate)) {
+        uniqueDates.add(eachDate);
+      }
+    }
+
+    for (String eachUniqueDate in uniqueDates) {
+      num totalExp = 0.0;
+      List<ExpenseModel> eachDateExp = [];
+
+      for (ExpenseModel eachExp in allExpenses) {
+        String eachDate = df.format(
+          DateTime.fromMillisecondsSinceEpoch(eachExp.createdAt),
+        );
+
+        if (eachUniqueDate == eachDate) {
+          eachDateExp.add(eachExp);
+
+          if (eachExp.expType == 1) {
+            totalExp -= eachExp.amt;
+          } else {
+            totalExp += eachExp.amt;
+          }
+        }
+      }
+
+      filteredExpenses.add(
+        FilterExpenseModel(
+          title: eachUniqueDate,
+          balance: totalExp,
+          eachTitleExp: eachDateExp,
+        ),
+      );
+    }
+
+    return filteredExpenses;
+  }
 }

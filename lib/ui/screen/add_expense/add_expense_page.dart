@@ -6,6 +6,7 @@ import 'package:expenso_422/ui/screen/add_expense/bloc/expense_event.dart';
 import 'package:expenso_422/ui/screen/add_expense/bloc/expense_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class AddExpensePage extends StatefulWidget {
   @override
@@ -23,6 +24,11 @@ class _AddExpensePageState extends State<AddExpensePage> {
   List<String> mTypes = ["Debit", "Credit" /*, "Loan", "Lend", "Borrow"*/];
 
   int selectedCatIndex = -1;
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
+  DateTime? selectedDateTime;
+  DateFormat df = DateFormat();
+  DateFormat tf = DateFormat.jms();
 
   ///1.add validation in add expense page
   ///2.add loader on loadingState when tapped on add expense
@@ -30,6 +36,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(title: Text('Add Expense')),
       body: Padding(
@@ -150,6 +157,62 @@ class _AddExpensePageState extends State<AddExpensePage> {
                     ),
             ),
             SizedBox(height: 11),
+            StatefulBuilder(
+              builder: (context, ss) {
+                return OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: Size(double.infinity, 55),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(21),
+                    ),
+                  ),
+                  onPressed: () async{
+                    selectedDate = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime.now().subtract(Duration(days: 365)),
+                        lastDate: DateTime.now());
+
+                    selectedTime = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute)
+                    );
+
+                    DateTime userDate = selectedDate ?? DateTime.now();
+                    TimeOfDay userTime = selectedTime ?? TimeOfDay.now();
+                    selectedDateTime = DateTime(userDate.year, userDate.month, userDate.day, userTime.hour, userTime.minute);
+
+
+                    ss((){});
+                  },
+                  child: Text(df.format(selectedDateTime ?? DateTime.now())),
+                );
+              }
+            ),
+            SizedBox(height: 11),
+            /*StatefulBuilder(
+                builder: (context, ss) {
+                  return OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: Size(double.infinity, 55),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(21),
+                      ),
+                    ),
+                    onPressed: () async{
+                      selectedTime = await showTimePicker(
+                          context: context,
+                        initialTime: TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute)
+                      );
+
+                      ss((){});
+                    },
+                    child: Text((selectedTime?? TimeOfDay.now()).format(context)),
+                  );
+                }
+            ),
+            SizedBox(
+              height: 11,
+            ),*/
             BlocListener<ExpenseBloc, ExpenseState>(
               listener: (context, state) {
                 if(state is ExpenseErrorState){
@@ -174,10 +237,14 @@ class _AddExpensePageState extends State<AddExpensePage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 55),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(21)
+                  ),
                   backgroundColor: Colors.pink.shade200,
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () {
+
                   ///shared pref logic
                   context.read<ExpenseBloc>().add(
                     AddExpenseEvent(
@@ -188,7 +255,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                         bal: 0.0,
                         expType: selectedType=="Debit" ? 1 : 2,
                         catId: AppConstants.allCat[selectedCatIndex].id,
-                        createdAt: DateTime.now().millisecondsSinceEpoch,
+                        createdAt: (selectedDateTime ?? DateTime.now()).millisecondsSinceEpoch,
                       ),
                     ),
                   );

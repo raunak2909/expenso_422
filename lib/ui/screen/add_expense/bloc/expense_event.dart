@@ -7,6 +7,13 @@ class AddExpenseEvent extends ExpenseEvent{
   AddExpenseEvent({required this.newExp});
 }
 
-class FetchInitialExpenseEvent extends ExpenseEvent{}
+class FetchInitialExpenseEvent extends ExpenseEvent{
+  ///1->date wise
+  ///2->month wise
+  ///3->year wise
+  ///4->cat wise
+  int filterFlag;
+  FetchInitialExpenseEvent({this.filterFlag=1});
+}
 
 
