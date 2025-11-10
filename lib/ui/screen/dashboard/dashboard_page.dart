@@ -39,8 +39,10 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("DashBoard"),
+        centerTitle: false,
+        title: Text("Monety"),
         actions: [
+          IconButton(onPressed: (){}, icon: Icon(Icons.search)),
           IconButton(
             onPressed: () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();

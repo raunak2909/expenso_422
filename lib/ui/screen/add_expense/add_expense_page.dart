@@ -20,7 +20,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
 
   var amtController = TextEditingController();
 
-  String selectedType = "Debit";
+  int selectedType = 1;
   List<String> mTypes = ["Debit", "Credit" /*, "Loan", "Lend", "Borrow"*/];
 
   int selectedCatIndex = -1;
@@ -91,9 +91,9 @@ class _AddExpensePageState extends State<AddExpensePage> {
               onSelected: (value) {
                 selectedType = value!;
               },
-              dropdownMenuEntries: mTypes.map((eachType) {
-                return DropdownMenuEntry(value: eachType, label: eachType);
-              }).toList(),
+              dropdownMenuEntries: List.generate(mTypes.length, (i){
+                return DropdownMenuEntry(value: i+1, label: mTypes[i]);
+              }),
             ),
             SizedBox(height: 11),
             OutlinedButton(
@@ -253,7 +253,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                         desc: descController.text,
                         amt: double.parse(amtController.text),
                         bal: 0.0,
-                        expType: selectedType=="Debit" ? 1 : 2,
+                        expType: selectedType,
                         catId: AppConstants.allCat[selectedCatIndex].id,
                         createdAt: (selectedDateTime ?? DateTime.now()).millisecondsSinceEpoch,
                       ),
