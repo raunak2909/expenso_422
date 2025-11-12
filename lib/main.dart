@@ -2,6 +2,7 @@ import 'package:expenso_422/data/local/helper/db_helper.dart';
 import 'package:expenso_422/domain/constants/app_routes.dart';
 import 'package:expenso_422/ui/screen/add_expense/bloc/expense_bloc.dart';
 import 'package:expenso_422/ui/screen/on_boarding/bloc/user_bloc.dart';
+import 'package:expenso_422/ui/screen/stats/chart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,8 +38,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      initialRoute: AppRoutes.splash,
-      routes: AppRoutes.mRoutes(),
+      home: ChartPage(),
+      /*initialRoute: AppRoutes.splash,
+      routes: AppRoutes.mRoutes(),*/
     );
   }
 }

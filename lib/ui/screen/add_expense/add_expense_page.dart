@@ -46,6 +46,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
             TextField(
               controller: titleController,
               decoration: myFieldDecoration(
+                prefixIcon: Icons.title,
                 label: "Title",
                 hint: "Enter your title here..",
               ),
